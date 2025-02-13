@@ -2,11 +2,12 @@ import styled from "styled-components"
 import { useEffect, useState } from "react";
 import SearchResult from "./components/SearchResult/SearchResult";
 
-const BASE_URL = "http://localhost:9000/"
+export const BASE_URL = "http://localhost:9000"
 
 const App = () => {
 
   const [data, setData ] = useState(null)
+  const [filteredData , setFilteredData] = useState(null)
   const [loding , setLoding] = useState(false)
   const [error , setError] = useState(null);
 
@@ -26,6 +27,8 @@ const App = () => {
       const json  = await response.json();
   
       setData(json);
+
+      setFilteredData(json);
   
       setLoding(false);
   
@@ -38,19 +41,21 @@ const App = () => {
     FetchFoodData()
   }, []);
 
-  console.log(data);
+const searchFood = (e) => {
+  const searchedValue = e.target.value;
 
-  // const temp = 
-  //   [
-  //     {
-  //         "name": "Boilded Egg",
-  //         "price": 10,
-  //         "text": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.",
-  //         "image": "/images/egg.png",
-  //         "type": "breakfast"
-  //     }
-  // ];
+  console.log(searchedValue);
 
+  if(searchedValue == ""){
+    setFilteredData(null);
+  }
+
+  const filter = data?.filter((food) => 
+    food.name.toLowerCase().includes(searchedValue.toLowerCase())
+  );
+
+  setFilteredData(filter);
+  };
   //check
 
   if(error) return <div>{error}</div>;
@@ -58,13 +63,14 @@ const App = () => {
 
 
   return( 
-  <Container>
+    <>
+      <Container>
     <TopContainer>
       <div className ="logo">
         <img src="../public/Foody Zone.png" alt="food-logo" />
       </div>
       <div className = "Search">
-        <input placeholder="Search Food" />
+        <input onChange={searchFood} placeholder="Search Food" />
       </div>
     </TopContainer>
     <FilterContainer>
@@ -75,14 +81,15 @@ const App = () => {
         <Button>Dinner</Button>
       </div>
       </FilterContainer>
-      <SearchResult />
   </Container>
+  <SearchResult data={filteredData}/>
+    </>
   )
 };
 
 export default App;
 
-const Container = styled.div`
+export const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
 
@@ -113,7 +120,7 @@ const FilterContainer = styled.section`
   padding-bottom: 40px;
 `
 
-const Button = styled.button`
+export const Button = styled.button`
   padding: 10px 20px;
   margin: 5px;
   border: none;
