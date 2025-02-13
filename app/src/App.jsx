@@ -10,6 +10,7 @@ const App = () => {
   const [filteredData , setFilteredData] = useState(null)
   const [loding , setLoding] = useState(false)
   const [error , setError] = useState(null);
+  const [selectedBtn , setSelectedBtn] = useState("all");
 
 
 
@@ -56,6 +57,41 @@ const searchFood = (e) => {
 
   setFilteredData(filter);
   };
+
+  const filterFood = (type) => {
+    if (type == "all") {
+      setFilteredData(data);
+      setSelectedBtn("all");
+      return;
+  };
+
+  const filter = data?.filter((food)=>
+    food.type.toLowerCase().includes(type.toLowerCase())
+  );
+
+  setFilteredData(filter);
+  setSelectedBtn(type);
+  };
+
+
+  const filterBtns = [
+    {
+      name: "All",
+      type: "all",
+    },
+    {
+      name: "Breakfast",
+      type: "breakfast",
+    },
+    {
+      name: "Lunch",
+      type:"lunch" ,
+    },
+    {
+      name: "Dinner",
+      type: "dinner",
+    }
+  ]
   //check
 
   if(error) return <div>{error}</div>;
@@ -74,12 +110,11 @@ const searchFood = (e) => {
       </div>
     </TopContainer>
     <FilterContainer>
-      <div>
-        <Button> All</Button>
-        <Button>Breakfast</Button>
-        <Button>Lunch</Button>
-        <Button>Dinner</Button>
-      </div>
+      {filterBtns.map((value) =>(        
+        <Button key={value.name} onClick={() => filterFood(value.type)} >
+          {value.name} 
+        </Button>
+      ))}
       </FilterContainer>
   </Container>
   <SearchResult data={filteredData}/>
@@ -104,12 +139,20 @@ const TopContainer = styled.div`
   .Search
   input{
     background-color: transparent;
-    border: 1px solid red;
-    color: white;
-    border-radius: 5px;
-    height: 40px;
-    font-size: 14px;
-    padding: 0 10px;
+      border: 1px solid red;
+      color: white;
+      border-radius: 5px;
+      height: 40px;
+      font-size: 16px;
+      padding: 0 10px;
+      &::placeholder {
+        color: white;
+      }
+    }
+
+  @media (0 < width < 600px) {
+    flex-direction: column;
+    height: 120px;
   }
 `;
 
